@@ -4,45 +4,51 @@
 
 #include <chrono>
 
-
+//РљРћР”РР РћР’РљРђ utf8
 void DoWork()
 {
 	for (size_t i = 0; i < 10; i++)
 	{
-		std::cout << "ID потока : " << std::this_thread::get_id() << "\tDoWork\t" << i << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //имитация бурной деятельности 
+		std::cout << "ID РїРѕС‚РѕРєР° : " << std::this_thread::get_id() << "\tDoWork\t" << i << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000)); //РёРјРёС‚Р°С†РёСЏ Р±СѓСЂРЅРѕР№ РґРµСЏС‚РµР»СЊРЅРѕСЃС‚Рё 
 	}
 
+	std::thread myth2(DoWork); //СЃРѕР·РґР°Р»Рё Р±РµСЃРєРѕРЅРµС‡РЅСѓСЋ СЂРµРєСѓСЂСЃРёСЋ РІС‹Р·РѕРІР° РїРѕС‚РѕРєРѕРІ (РљРђРљРРњ РћР‘Р РђР—РћРњ Р’ РўРђРљРћРњ РЎР›РЈР§РђР• РџР Р•Р”РЈРЎРњРћРўР Р•РўР¬ Р’Р«РҐРћР” РР— Р Р•РљРЈР РЎРР????????????)
 	/*while (true)
-	{ проверка на бесконечный цикл многоразовый запуск
+	{ РїСЂРѕРІРµСЂРєР° РЅР° Р±РµСЃРєРѕРЅРµС‡РЅС‹Р№ С†РёРєР» РјРЅРѕРіРѕСЂР°Р·РѕРІС‹Р№ Р·Р°РїСѓСЃРє
 	}*/
 
 	system("pause");
 }
 
+//Tools > Options > Environment > Documents > Save documents as Unicode when data cannot be saved in codepage
+
 int main()
 {
 	setlocale(LC_ALL, "Rus");
 
-	std::thread myth(DoWork); //так будет ошибка
-	myth.detach(); //поток может выполняться самостоятельно, но до конца работы main()
+	std::thread myth(DoWork); //С‚Р°Рє Р±СѓРґРµС‚ РѕС€РёР±РєР°
+	//myth.detach(); //РїРѕС‚РѕРє РјРѕР¶РµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅРѕ, РЅРѕ РґРѕ РєРѕРЅС†Р° СЂР°Р±РѕС‚С‹ main()
 
-	//myth.join(); //так задачи будут выполняться в разных потоках, но последовательно, важно понимать когда вызывать метод join
-	//DoWork(); работа в одном потоке
+
+	//myth.join(); //С‚Р°Рє Р·Р°РґР°С‡Рё Р±СѓРґСѓС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ РІ СЂР°Р·РЅС‹С… РїРѕС‚РѕРєР°С…, РЅРѕ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ, РІР°Р¶РЅРѕ РїРѕРЅРёРјР°С‚СЊ РєРѕРіРґР° РІС‹Р·С‹РІР°С‚СЊ РјРµС‚РѕРґ join
+	//DoWork(); СЂР°Р±РѕС‚Р° РІ РѕРґРЅРѕРј РїРѕС‚РѕРєРµ
 
 	for (size_t i = 0; i < 10; i++)
 	{
-		std::cout << "ID потока : " << std::this_thread::get_id() << "\tmain\t" << i << std::endl;
+		std::cout << "ID РїРѕС‚РѕРєР° : " << std::this_thread::get_id() << "\tmain\t" << i << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
+
 	try
 	{
-		myth.join(); //вызываем там, где мы хотим дождаться выполнения потока
+		myth.join(); //РІС‹Р·С‹РІР°РµРј С‚Р°Рј, РіРґРµ РјС‹ С…РѕС‚РёРј РґРѕР¶РґР°С‚СЊСЃСЏ РІС‹РїРѕР»РЅРµРЅРёСЏ РїРѕС‚РѕРєР°
 	}
-	catch (std::system_error & ex) // направил join в атаку на detach
+	catch (std::system_error & ex) // РЅР°РїСЂР°РІРёР» join РІ Р°С‚Р°РєСѓ РЅР° detach
 	{
 		std::cout << ex.what() << std::endl;
 		__asm nop
 	}
+
 	return 0;
 }
